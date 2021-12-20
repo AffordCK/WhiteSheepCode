@@ -12,7 +12,7 @@ classdef Env
         FileName                                    % scenario file name
         VehicleList                                 % the vehicle list in one data file
         CellIndex                                   % the index of the cell
-        
+        MaxIndex                                    % the max index in the scenario file name
     end
     
     methods
@@ -38,6 +38,7 @@ classdef Env
             obj.CellIndex = index;
             vehicleList = load(filename, 'vehicleList').vehicleList;
             obj.VehicleList = vehicleList;
+            obj.MaxIndex = numel(obj.VehicleList);
             vehiclesTrajectory = vehicleList{1, index}.vehicles;
             vehicleNum = 1 + numel(vehiclesTrajectory);
             vehicleSet = zeros(vehicleNum, 3);
@@ -150,21 +151,21 @@ classdef Env
             
         end
         
-        function [obj, reward, newState, Done] = step(obj, action)
+        function [obj, newState, reward, Done] = step(obj, action)
             %   function to take action from  sampe
             %   param: action, [delta_s, delta_s_dot, delta_s_ddot, delta_l, delta_l_dos, delta_l_ddos, delta_T]
             
             %   Planning Firstly
             planStartState = obj.RoadInstance.VehicleSet{1, 1}.FrenetState;
             planResult = obj.PlannerInstance.get_trajectory(planStartState,...
-                planStartState + action(1:end - 1),...
+                planStartState + action(1, 1:end - 1),...
                 action(end),...
                 obj.Conf.TimeResolution,...
                 1);
             planTrajectory = planResult.trajectory;
             
             %   Check the feasiblity
-            newState = zeros(1, 14);
+            newState = zeros(14, 1);
             if obj.PlannerInstance.check_trajectory(planTrajectory)
 %                 newState(1) = planStartState(1) + action(1);
 %                 newState(2) = -10;
@@ -217,7 +218,7 @@ classdef Env
             %   Update the egoCar Frenet State
             obj.RoadInstance.VehicleSet{1, 1}.FrenetState = planTrajectory(result.runTimeIndex, :);
             
-            %   Get the new State from DRL
+            %   Get the new State for DRL
             [frontCar, behindCar] = obj.RoadInstance.get_surrounding_car(1);
             newState = obj.RoadInstance.car_to_state(1, frontCar, behindCar);
             

@@ -87,6 +87,8 @@ classdef Road
         end
         
         function obj = reset(obj)
+            %   reset function
+            obj.CurrentTimeIndex = 1;
             obj = obj.clear_vehicles();
             obj = obj.clear_vistor();
         end
@@ -172,7 +174,7 @@ classdef Road
             %                               folS,       folV,           (11, 12)
             %                               rightFolS,  rightFolV]      (13, 14)
             %   TODO: lane info like curvature may be included.
-            state = zeros(1, 14);
+            state = zeros(14, 1);
             state(1) = obj.VehicleSet{1, vehicleid}.FrenetState(1);     % may be we don't need this
             state(2) = obj.VehicleSet{1, vehicleid}.FrenetState(2);
             
@@ -207,7 +209,6 @@ classdef Road
                          obj.VehicleSet{1, vehicleid}.FrenetState(2);
                 end
             end
-            
 %             state = state(2:end);
             
         end
