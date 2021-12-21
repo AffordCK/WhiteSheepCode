@@ -155,18 +155,29 @@ classdef Env
             %   function to take action from  sampe
             %   param: action, [delta_s, delta_s_dot, delta_s_ddot, delta_l, delta_l_dos, delta_l_ddos, delta_T]
             
+            if size(action, 1) > 1 && size(action, 2) == 1
+                action = action';
+            end
+            action
+            %   Check the feasiblity
+            newState = zeros(14, 1);
+            
+            if action(end) < obj.Conf.TimeResolution
+                reward = obj.RewardInstance.InFeasibleReward;
+                Done = true;
+                return;
+            end
+            
             %   Planning Firstly
             planStartState = obj.RoadInstance.VehicleSet{1, 1}.FrenetState;
             planResult = obj.PlannerInstance.get_trajectory(planStartState,...
-                planStartState + action(1, 1:end - 1),...
+                planStartState + action(1, 1: end - 1),...
                 action(end),...
                 obj.Conf.TimeResolution,...
                 1);
             planTrajectory = planResult.trajectory;
             
-            %   Check the feasiblity
-            newState = zeros(14, 1);
-            if obj.PlannerInstance.check_trajectory(planTrajectory)
+            if ~obj.PlannerInstance.check_trajectory(planTrajectory) || any(any(isnan(planTrajectory)))
 %                 newState(1) = planStartState(1) + action(1);
 %                 newState(2) = -10;
                 reward = obj.RewardInstance.InFeasibleReward;

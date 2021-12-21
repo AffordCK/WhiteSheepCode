@@ -66,9 +66,9 @@ classdef conf
             obj.LaneOffsetWeight = 10;        
 
 
-            obj.VelocityWeight = 1;        
-            obj.LongJerkWeight = 1;              
-            obj.LatJerkWeight = 1;              
+            obj.VelocityWeight = -1;        
+            obj.LongJerkWeight = -1;              
+            obj.LatJerkWeight = -1;              
         end
     end
 end

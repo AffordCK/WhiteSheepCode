@@ -138,6 +138,12 @@ classdef Reward
                 obj.VelocityReward * obj.VelocityWeight +...
                 obj.LongJerkReward * obj.LongJerkWeight +...
                 obj.LatJerkReward * obj.LatJerkWeight;
+            fprintf("TotalReward is: %d\n", obj.TotalReward);
+            fprintf("Distance Reward is: %d\n", obj.DistanceReward);
+            fprintf("Time Reward is: %d\n", obj.TimeReward);
+            fprintf("Lane Offset Reward is %d\n", obj.LaneOffsetReward);
+            fprintf("Long Jerk Reward is: %d\n", obj.LongJerkReward);
+            fprintf("Lateral Jerk Reward is: %d\n", obj.LatJerkReward);
         end
         
     end
